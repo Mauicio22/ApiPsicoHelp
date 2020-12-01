@@ -21,20 +21,12 @@ namespace ApiPsicoHelp.Controllers
         }
 
         [HttpGet("{Rol}")]
-        public JsonResult ObtenerRol(string Rol)
+        public JsonResult ObtenerRol(int Rol)
         {
-            var conversionExitosa = int.TryParse(Rol, out int idConvertido);
-
-            Models.Usuario rolRetornado;
-
-            if (conversionExitosa)
-            {
-                rolRetornado = UsuarioAzure.ObtenerUsuario(idConvertido);
-            }
-            else
-            {
-                rolRetornado = UsuarioAzure.ObtenerUsuario(Rol);
-            }
+            Models.Rol rolRetornado;
+                
+            rolRetornado = RolAzure.ObtenerRol(Rol);
+ 
             if (rolRetornado is null)
             {
                 return new JsonResult($"Intente nuevamente con un parametro distinto a {Rol}");

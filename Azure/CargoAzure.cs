@@ -13,7 +13,7 @@ namespace ApiPsicoHelp.Azure
         static string connectionString = @"Server= localhost; Database=PsicoHelp; Integrated Security=True;";
         private static List<Cargo> cargos;
 
-        public static List<Cargo> obtenerCargo()
+        public static List<Cargo> obtenerCargos()
         {
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
@@ -52,7 +52,7 @@ namespace ApiPsicoHelp.Azure
 
             return cargos;
         }
-        public static Cargo ObtenerCargos(int idCargo)
+        public static Cargo obtenerCargoPorId(int idCargo)
         {
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
@@ -66,6 +66,7 @@ namespace ApiPsicoHelp.Azure
 
             }
         }
+        
         private static SqlCommand AbrirConexionSqlCargo(SqlConnection sqlConnection, string query)
         {
             SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
@@ -99,6 +100,56 @@ namespace ApiPsicoHelp.Azure
                 sqlCommand.Parameters.AddWithValue("@idCargo", cargo.idCargo);
                 sqlCommand.Parameters.AddWithValue("@nombreCargo", cargo.nombreCargo);
                 sqlCommand.Parameters.AddWithValue("@idUsuario", cargo.idUsuario);
+
+                try
+                {
+                    sqlConnection.Open();
+                    filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    sqlConnection.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                return filasAfectadas;
+            }
+        }
+        public static int EliminarCargo(int idCargo)
+        {
+            int filasAfectadas = 0;
+
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand(null, sqlConnection);
+                sqlCommand.CommandText = "Delete from Cargo where idCargo = @idCargo";
+
+                sqlCommand.Parameters.AddWithValue("@idCargo", idCargo);
+
+                try
+                {
+                    sqlConnection.Open();
+                    filasAfectadas = sqlCommand.ExecuteNonQuery();
+                    sqlConnection.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                return filasAfectadas;
+            }
+        }
+        public static int ActualizarCargo(Cargo cargo)
+        {
+            int filasAfectadas = 0;
+
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand(null, sqlConnection);
+                sqlCommand.CommandText = "Update Cargo SET nombreCargo = @nombreCargo WHERE idCargo = @idCargo";
+
+                sqlCommand.Parameters.AddWithValue("@nombreCargo", cargo.nombreCargo);
+                sqlCommand.Parameters.AddWithValue("@idCargo", cargo.idCargo);
+
 
                 try
                 {
